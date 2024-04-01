@@ -38,7 +38,8 @@ public class PostsController {
 
     @GetMapping(path = "/{id}")
     public Post getById(@PathVariable long id) {
-        return postRepository.findById(id).get();
+        return postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found"));
     }
 
     @PostMapping
@@ -50,7 +51,11 @@ public class PostsController {
     @PutMapping(path = "/{id}")
     public Post update(@PathVariable long id, @RequestBody Post post)
     {
-        return postRepository.save(post);
+        var productUp = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found"));
+        productUp.setTitle(post.getTitle());
+        productUp.setBody(post.getBody());
+        return post;
     }
 
     @DeleteMapping("/{id}")
